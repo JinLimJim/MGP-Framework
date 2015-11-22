@@ -25,13 +25,13 @@ public class MainMenu extends Activity implements OnClickListener {
         requestWindowFeature(Window.FEATURE_NO_TITLE);// hide title
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
 
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+       // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         setContentView(R.layout.mainmenu);
 
-       // bgMusic = MediaPlayer.create(MainMenu.this, R.raw.chasers);
-       // bgMusic.setLooping(true);
-      //  bgMusic.start();
+        bgMusic = MediaPlayer.create(MainMenu.this, R.raw.chasers);
+        bgMusic.setLooping(true);
+        bgMusic.start();
 
         btn_start = (Button)findViewById(R.id.btn_start);
         btn_start.setOnClickListener(this);
@@ -66,8 +66,8 @@ public class MainMenu extends Activity implements OnClickListener {
 
     protected void onPause(){
         super.onPause();
-      //  bgMusic.release();
-        finish();
+        bgMusic.release();
+      //  finish();
     }
 
     protected void onStop(){

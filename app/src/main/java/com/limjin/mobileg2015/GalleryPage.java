@@ -42,11 +42,11 @@ public class GalleryPage extends Activity implements OnClickListener {
             @Override
             public void onClick(View v) {
                 if(changeImage == false) {
-                    image.setImageResource(R.drawable.krghost);
+                    image.setImageResource(R.drawable.earth1);
                     changeImage = true;
                 }
                 else {
-                    image.setImageResource(R.drawable.city);
+                    image.setImageResource(R.drawable.earth2);
                     changeImage = false;
                 }
             }

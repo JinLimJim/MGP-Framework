@@ -8,12 +8,16 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 public class Splashpage extends Activity {
 
     protected boolean _active = true;
     protected int _splashTime = 5000; // time to display in ms
     //MediaPlayer ourSong;
+    ImageView image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +25,6 @@ public class Splashpage extends Activity {
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);// hide title
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
-
-      //  setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
 
         setContentView(R.layout.splashpage);
 
@@ -50,7 +52,8 @@ public class Splashpage extends Activity {
                     Intent intent = new Intent(Splashpage.this, MainMenu.class);
 
                     startActivity(intent);
-                   // overridePendingTransition(R.animator.splashfadein, R.animator.splashfadeout);
+
+                   overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
                 }
             }
         };
@@ -61,7 +64,6 @@ public class Splashpage extends Activity {
     protected  void onPause(){
         super.onPause();
        // ourSong.release();
-        finish();
     }
 
     public boolean onTouchEvent(MotionEvent event){

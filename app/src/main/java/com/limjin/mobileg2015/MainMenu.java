@@ -50,7 +50,7 @@ public class MainMenu extends Activity implements OnClickListener {
 
         if(view == btn_start)
         {
-            intent.setClass(this, Splashpage.class);
+            intent.setClass(this, Level1splash.class);
         }
 
         else if(view == btn_option){

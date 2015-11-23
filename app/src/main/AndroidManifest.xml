@@ -7,11 +7,13 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="HIT Parade"
+        android:label="Earth Savior"
         android:supportsRtl="true">
 
         <activity
-            android:name=".Splashpage">
+            android:name=".Splashpage"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,7 +23,9 @@
         </activity>
 
         <activity
-            android:name=".MainMenu">
+            android:name=".MainMenu"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +35,9 @@
         </activity>
 
         <activity
-            android:name=".OptionPage">
+            android:name=".GamePage"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -41,7 +47,33 @@
         </activity>
 
         <activity
-            android:name=".GalleryPage">
+            android:name=".OptionPage"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.default" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".GalleryPage"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.default" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Level1splash"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

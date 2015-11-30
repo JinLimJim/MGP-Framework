@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -110,11 +112,12 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         canvas.drawBitmap(spaceShip[spaceshipIndex], 100, 100, null);
 
         // Bonus) To print FPS on the screen
-        //Paint paint = new Paint();
-        //paint.setARGB(255, 255, 255, 255);
-        //String fPs = Float.toString(myThread.yolo);
-        //String lai = "Lai Xiu Xian";
-       // canvas.drawText(lai, this.bgX / 2, 20, paint);
+        Paint paint = new Paint();
+        paint.setARGB(255, 255, 0, 0);
+        paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
+        paint.setTextSize(60);
+        paint.setShadowLayer(10, 10, 8, Color.BLACK);
+        canvas.drawText("FPS: " + FPS, 130, 50, paint);
     }
 
 

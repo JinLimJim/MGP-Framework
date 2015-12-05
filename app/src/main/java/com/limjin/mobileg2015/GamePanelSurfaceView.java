@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.DragEvent;
@@ -27,6 +28,17 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     // Variables used for background rendering
     private Bitmap bg, scaledbg;
+
+    // Variables used for dangerous dustbin
+    private Bitmap Ddustbin, scaledDDustbin;
+
+    // Variables used for recycled dustbin
+    private Bitmap Rdustbin, scaledRDustbin;
+
+    // Variables used for rubbish
+    private Bitmap rubbish, scaledRubbish;
+    short rX = 0, rY = 0;
+
     // Define Screen width and Screen height as integer
     int screenWidth, screenHeight;
     // Variables for defining background start and end point
@@ -39,9 +51,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private short mX = 0, mY = 0;
 
     // Set up variables for Drag Events
-    float x, y = 0.0f;
     short X, Y;
-    boolean moving = false;
+
+    // Set up variables for game details E.g. score, etc
+    int score;
 
     // Define sprite object from the SpriteAnimation class
     private SpriteAnimation stone_anim;
@@ -50,6 +63,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     public float FPS;
     float deltaTime;
     long dt;
+
+    // Collision bounds
+
 
     // Variable for Game State check
     private short GameState;
@@ -71,6 +87,15 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Load the image when this class is being instantiated
         bg = BitmapFactory.decodeResource(getResources(), R.drawable.gamescene);
         scaledbg = Bitmap.createScaledBitmap(bg, screenWidth, screenHeight, true);
+
+        Ddustbin = BitmapFactory.decodeResource(getResources(), R.drawable.dangerdustbin);
+        scaledDDustbin = Bitmap.createScaledBitmap(Ddustbin, 250, 250, true);
+
+        Rdustbin = BitmapFactory.decodeResource(getResources(), R.drawable.recycledustbin);
+        scaledRDustbin = Bitmap.createScaledBitmap(Rdustbin, 250, 250, true);
+
+        rubbish = BitmapFactory.decodeResource(getResources(), R.drawable.rubbish2);
+        scaledRubbish = Bitmap.createScaledBitmap(rubbish, 300, 300, true);
 
         // Load the images of the spaceships
         spaceShip[0] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_1);
@@ -128,8 +153,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
         canvas.drawBitmap(scaledbg, bgX, bgY, null);
         canvas.drawBitmap(scaledbg, bgX + screenWidth, bgY, null);
+
+        // Draw the rubbish
+        canvas.drawBitmap(scaledRubbish, rX, rY, null);
+
         // Draw the spaceships
-        canvas.drawBitmap(spaceShip[spaceshipIndex], mX, mY, null);
+        //canvas.drawBitmap(spaceShip[spaceshipIndex], mX, mY, null);
+
+        // Draw the dangerous dustbin
+        canvas.drawBitmap(scaledDDustbin, canvas.getWidth() - scaledDDustbin.getWidth() - 800, canvas.getHeight() - scaledDDustbin.getHeight(), null);
+
+        // Draw the recycled dustbin
+        canvas.drawBitmap(scaledRDustbin, canvas.getWidth() - scaledRDustbin.getWidth() - 100, canvas.getHeight() - scaledRDustbin.getHeight(), null);
 
         // Render the sprite
         stone_anim.Draw(canvas);
@@ -142,6 +177,14 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         paint.setTextSize(60);
         paint.setShadowLayer(10, 10, 8, Color.BLUE);
         canvas.drawText("FPS: " + FPS, 130, 50, paint);
+
+        // To print score on the screen
+        Paint scoring = new Paint();
+        scoring.setARGB(255, 255, 255, 0);
+        scoring.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
+        scoring.setTextSize(60);
+        scoring.setShadowLayer(10, 10, 8, Color.BLACK);
+        canvas.drawText("Score: " + score, 800, 50, scoring);
     }
 
 
@@ -151,13 +194,13 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         switch (GameState) {
             case 0: {
-                // 3) Update the background to allow panning effect
+                // Update the background to allow panning effect
                 bgX -= 200 * dt; // Allow panning speed
                 if(bgX < -screenWidth) {
                     bgX = 0;
                 }
 
-                // 4e) Update the spaceship images / shipIndex so that the animation will occur.
+                // Update the spaceship images / shipIndex so that the animation will occur.
                 spaceshipIndex++;
                 spaceshipIndex %= 4; // run through the index
 
@@ -254,9 +297,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                // Set the image position to where the touched event happens
-                mX = (short)((short) event.getX() - (spaceShip[spaceshipIndex].getWidth() / 2));
-                mY = (short)((short) event.getY() - (spaceShip[spaceshipIndex].getHeight() / 2));
+                // Set the spaceship image position to where the touched event happens
+               // mX = (short)((short) event.getX() - (spaceShip[spaceshipIndex].getWidth() / 2));
+                //mY = (short)((short) event.getY() - (spaceShip[spaceshipIndex].getHeight() / 2));
+
+                // Set the rubbish image position to where the touched event happens
+                rX = (short)((short) event.getX() - (scaledRubbish.getWidth() / 2));
+                rY = (short)((short) event.getY() - (scaledRubbish.getHeight() / 2));
+
+/*                if(CheckCollision(mX, mY, spaceShip[spaceshipIndex].getWidth(), spaceShip[spaceshipIndex].getHeight(), scaledDustbin.getWidth(),scaledDustbin.getHeight(), dustbin.getWidth(), dustbin.getHeight()))
+                {
+                    score++;
+                }*/
 
                 if(CheckCollision(mX, mY, spaceShip[spaceshipIndex].getWidth(), spaceShip[spaceshipIndex].getHeight(), stone_anim.getX(), stone_anim.getY(), stone_anim.getSpriteWidth(), stone_anim.getSpriteHeight()))
                 {

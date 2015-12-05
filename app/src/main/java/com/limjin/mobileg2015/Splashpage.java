@@ -31,6 +31,8 @@ public class Splashpage extends Activity {
         //ourSong = MediaPlayer.create(Splashpage.this, R.raw.splashmusic);
        // ourSong.start();
 
+        //overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
+
         //thread for displaying the Splash Screen
         Thread splashTread = new Thread() {
             @Override
@@ -65,6 +67,7 @@ public class Splashpage extends Activity {
         super.onPause();
        // ourSong.release();
     }
+
 
     public boolean onTouchEvent(MotionEvent event){
         if(event.getAction() == MotionEvent.ACTION_DOWN){

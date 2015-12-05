@@ -29,6 +29,8 @@ public class MainMenu extends Activity implements OnClickListener {
 
         setContentView(R.layout.mainmenu);
 
+        overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
+
         bgMusic = MediaPlayer.create(MainMenu.this, R.raw.chasers);
         bgMusic.setLooping(true);
         bgMusic.start();

@@ -5,10 +5,12 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
 public class GamePage extends Activity{
-
+    ImageView img;
     MediaPlayer bgMusic;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -16,8 +18,6 @@ public class GamePage extends Activity{
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
-
-        // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         setContentView(new GamePanelSurfaceView(this));
 
@@ -38,5 +38,4 @@ public class GamePage extends Activity{
     protected void onDestroy(){
         super.onDestroy();
     }
-
 }

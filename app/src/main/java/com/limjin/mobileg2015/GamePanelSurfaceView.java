@@ -27,7 +27,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     private GameThread myThread = null; // Thread to control the rendering
 
     // Variables used for background rendering
-    private Bitmap bg, scaledbg;
+    private Bitmap bg, scaledbg, ground, scaledground;
 
     // Variables used for dangerous dustbin
     private Bitmap Ddustbin, scaledDDustbin;
@@ -85,8 +85,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         screenHeight = metrics.heightPixels;
 
         // Load the image when this class is being instantiated
-        bg = BitmapFactory.decodeResource(getResources(), R.drawable.gamescene);
+        bg = BitmapFactory.decodeResource(getResources(), R.drawable.bg);
         scaledbg = Bitmap.createScaledBitmap(bg, screenWidth, screenHeight, true);
+//        ground = BitmapFactory.decodeResource(getResources(), R.drawable.ground);
+//        scaledground = Bitmap.createScaledBitmap(ground, screenWidth, screenHeight, true);
 
         Ddustbin = BitmapFactory.decodeResource(getResources(), R.drawable.dangerdustbin);
         scaledDDustbin = Bitmap.createScaledBitmap(Ddustbin, 250, 250, true);
@@ -104,7 +106,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         spaceShip[3] = BitmapFactory.decodeResource(getResources(), R.drawable.ship2_4);
 
         // Load the animated sprite
-        stone_anim = new SpriteAnimation(BitmapFactory.decodeResource(getResources(),R.drawable.flystone), 320, 64, 5, 5);
+        stone_anim = new SpriteAnimation(BitmapFactory.decodeResource(getResources(), R.drawable.flystone), 320, 64, 5, 5);
 
         // Create the game loop thread
         myThread = new GameThread(getHolder(), this);
@@ -167,24 +169,24 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         canvas.drawBitmap(scaledRDustbin, canvas.getWidth() - scaledRDustbin.getWidth() - 100, canvas.getHeight() - scaledRDustbin.getHeight(), null);
 
         // Render the sprite
-        stone_anim.Draw(canvas);
-        stone_anim.setY(600);
+        //stone_anim.Draw(canvas);
+        //stone_anim.setY(600);
 
         // To print FPS on the screen
         Paint paint = new Paint();
         paint.setARGB(255, 255, 0, 0);
         paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
         paint.setTextSize(60);
-        paint.setShadowLayer(10, 10, 8, Color.BLUE);
+        paint.setShadowLayer(10, 10, 8, Color.GREEN);
         canvas.drawText("FPS: " + FPS, 130, 50, paint);
 
         // To print score on the screen
         Paint scoring = new Paint();
-        scoring.setARGB(255, 255, 255, 0);
+        scoring.setARGB(255, 255, 0, 0);
         scoring.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
         scoring.setTextSize(60);
         scoring.setShadowLayer(10, 10, 8, Color.BLACK);
-        canvas.drawText("Score: " + score, 800, 50, scoring);
+        canvas.drawText("Score: " + score, 1200, 50, scoring);
     }
 
 
@@ -195,7 +197,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         switch (GameState) {
             case 0: {
                 // Update the background to allow panning effect
-                bgX -= 200 * dt; // Allow panning speed
+                bgX -= 100 * dt; // Allow panning speed
                 if(bgX < -screenWidth) {
                     bgX = 0;
                 }

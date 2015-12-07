@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,6 +23,7 @@ public class GalleryPage extends Activity implements OnClickListener {
     private Button btn_change;
     Boolean changeImage = false;
     ImageView image;
+    MediaPlayer buttonClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,8 @@ public class GalleryPage extends Activity implements OnClickListener {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
 
         setContentView(R.layout.gallerypage);
+
+        buttonClick = MediaPlayer.create(this, R.raw.buttonsound);
 
         image = (ImageView) findViewById(R.id.imageView1);
 
@@ -65,6 +69,7 @@ public class GalleryPage extends Activity implements OnClickListener {
         if(view == btn_back)
         {
             intent.setClass(this, MainMenu.class);
+            buttonClick.start();
         }
 
         startActivity(intent);

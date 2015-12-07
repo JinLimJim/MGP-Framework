@@ -3,6 +3,8 @@ package com.limjin.mobileg2015;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.media.Image;
+
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -28,10 +30,37 @@ public class Splashpage extends Activity {
 
         setContentView(R.layout.splashpage);
 
+//        final ImageView iv = (ImageView) findViewById(R.id.imageView1);
+//        final Animation an = AnimationUtils.loadAnimation(getBaseContext(), R.anim.rotate);
+//        final Animation an2 = AnimationUtils.loadAnimation(getBaseContext(), R.anim.splashfadeout);
+//
+//        iv.startAnimation(an);
+//        an.setAnimationListener(new Animation.AnimationListener()
+//        {
+//            @Override
+//            public void onAnimationStart(Animation animation){
+//
+//            }
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                iv.startAnimation(an2);
+//                finish();
+//                Intent i = new Intent(Splashpage.this, MainMenu.class);
+//                startActivity(i);
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){
+//
+//            }
+//        });
+
+
         //ourSong = MediaPlayer.create(Splashpage.this, R.raw.splashmusic);
        // ourSong.start();
 
-        //overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
+        overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
 
         //thread for displaying the Splash Screen
         Thread splashTread = new Thread() {
@@ -55,7 +84,7 @@ public class Splashpage extends Activity {
 
                     startActivity(intent);
 
-                   overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
+                   //overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
                 }
             }
         };

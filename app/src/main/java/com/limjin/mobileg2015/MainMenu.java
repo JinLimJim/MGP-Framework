@@ -17,6 +17,9 @@ public class MainMenu extends Activity implements OnClickListener {
     private Button btn_option;
     private Button btn_gallery;
     MediaPlayer bgMusic;
+    MediaPlayer buttonClick;
+    MediaPlayer buttonStart;
+    private int checkmainMusic = OptionPage.music;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +34,17 @@ public class MainMenu extends Activity implements OnClickListener {
 
         overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
 
-        bgMusic = MediaPlayer.create(MainMenu.this, R.raw.chasers);
-        bgMusic.setLooping(true);
-        bgMusic.start();
+        // Set up background music
+        if(checkmainMusic == 0) {
+            bgMusic = MediaPlayer.create(MainMenu.this, R.raw.chasers);
+            bgMusic.setVolume(20, 20);
+            bgMusic.setLooping(true);
+            bgMusic.start();
+        }
+
+        // Set up button music
+        buttonClick = MediaPlayer.create(this, R.raw.buttonsound);
+        buttonStart = MediaPlayer.create(this, R.raw.buttonstart);
 
         btn_start = (Button)findViewById(R.id.btn_start);
         btn_start.setOnClickListener(this);
@@ -53,14 +64,17 @@ public class MainMenu extends Activity implements OnClickListener {
         if(view == btn_start)
         {
             intent.setClass(this, Level1splash.class);
+            buttonStart.start();
         }
 
         else if(view == btn_option){
             intent.setClass(this, OptionPage.class);
+            buttonClick.start();
         }
 
         else if(view == btn_gallery){
             intent.setClass(this, GalleryPage.class);
+            buttonClick.start();
         }
 
         startActivity(intent);
@@ -68,8 +82,12 @@ public class MainMenu extends Activity implements OnClickListener {
 
     protected void onPause(){
         super.onPause();
-        bgMusic.release();
-      //  finish();
+        if(checkmainMusic == 0) {
+            bgMusic.release();
+            //  finish();
+        }
+        // Reset the global variable
+        OptionPage.music = 0;
     }
 
     protected void onStop(){

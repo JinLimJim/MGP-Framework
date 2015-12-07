@@ -14,7 +14,7 @@
         android:layout_height="60dp"
         android:background="#6dce5d"
         android:text="Play Game"
-       android:textColor="#1b33e5"
+        android:textColor="#1b33e5"
 
         android:layout_above="@+id/btn_option"
         android:layout_centerHorizontal="true"

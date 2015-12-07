@@ -21,28 +21,46 @@ import android.widget.ImageView;
 
 import java.util.Random;
 
+// Implement this interface to receive information about changes to the surface.
 public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
-    // Implement this interface to receive information about changes to the surface.
 
-    private GameThread myThread = null; // Thread to control the rendering
+    /*************************************** System *********************************************/
+    // Thread to control the rendering----------------------//
+    private Paint paint = new Paint();
+    private GameThread myThread = null;
 
-    // Variables used for background rendering
-    private Bitmap bg, scaledbg, ground, scaledground;
+    // Variables for FPS
+    public float FPS;
+    float deltaTime;
+    long dt;
 
-    // Variables used for dangerous dustbin
+    /*************************************** Gameplay ********************************************/
+    GameLevel gameLevel = new GameLevel();
+
+    //finger touching screen----------------------------//
+     private AABB finger;
+
+    // Variables used for background rendering-------------//
+    private Bitmap bg, scaledbg;
+
+    // background start and end point
+    private short bgX = 0, bgY = 0;
+
+    // Variables used for dangerous dustbin-------------//
     private Bitmap Ddustbin, scaledDDustbin;
 
-    // Variables used for recycled dustbin
+    // Variables used for recycled dustbin-------------//
     private Bitmap Rdustbin, scaledRDustbin;
 
-    // Variables used for rubbish
+    // Variables used for rubbish-------------//
     private Bitmap rubbish, scaledRubbish;
     short rX = 0, rY = 0;
 
-    // Define Screen width and Screen height as integer
+    /*************************************** Properties *********************************************/
+    // Screen width and Screen height----------------------------------//
     int screenWidth, screenHeight;
-    // Variables for defining background start and end point
-    private short bgX = 0, bgY = 0;
+
+    //Spaceship---------------------------------------------------------//
     // bitmap array to stores 4 images of the spaceship
     private Bitmap[] spaceShip = new Bitmap[4];
     // Variable as an index to keep track of the spaceship images
@@ -50,31 +68,30 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
     // Variables to store the new location upon touch
     private short mX = 0, mY = 0;
 
+    /*************************************** Drag *********************************************/
     // Set up variables for Drag Events
     short X, Y;
 
+    /*************************************** Misc *********************************************/
     // Set up variables for game details E.g. score, etc
     int score;
 
     // Define sprite object from the SpriteAnimation class
     private SpriteAnimation stone_anim;
 
-    // Variables for FPS
-    public float FPS;
-    float deltaTime;
-    long dt;
-
-    // Collision bounds
-
 
     // Variable for Game State check
     private short GameState;
 
+    /**************************************************************************************
     //constructor for this GamePanelSurfaceView class
+     **************************************************************************************/
     public GamePanelSurfaceView (Context context){
 
         // Context is the current state of the application/object
         super(context);
+
+        this.context = context;
 
         // Adding the callback (this) to the surface holder to intercept events
         getHolder().addCallback(this);
@@ -113,10 +130,16 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         // Make the GamePanel focusable so it can handle events
         setFocusable(true);
+
+       gameLevel.Init(context, screenWidth, screenHeight);
+        finger = new AABB(170.f, 0.f, 70.f, 70.f);
     }
 
-    //must implement inherited abstract methods
+    /**************************************************************************************
+    Necessary abstract methods
+     **************************************************************************************/
     public void surfaceCreated(SurfaceHolder holder){
+
         // Create the thread
         if (!myThread.isAlive()){
             myThread = new GameThread(getHolder(), this);
@@ -148,54 +171,18 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     }
 
-    public void RenderGameplay(Canvas canvas) {
-        // Re-draw 2nd image after the 1st image ends
-        if(canvas == null) {
-            return;
-        }
-        canvas.drawBitmap(scaledbg, bgX, bgY, null);
-        canvas.drawBitmap(scaledbg, bgX + screenWidth, bgY, null);
-
-        // Draw the rubbish
-        canvas.drawBitmap(scaledRubbish, rX, rY, null);
-
-        // Draw the spaceships
-        //canvas.drawBitmap(spaceShip[spaceshipIndex], mX, mY, null);
-
-        // Draw the dangerous dustbin
-        canvas.drawBitmap(scaledDDustbin, canvas.getWidth() - scaledDDustbin.getWidth() - 800, canvas.getHeight() - scaledDDustbin.getHeight(), null);
-
-        // Draw the recycled dustbin
-        canvas.drawBitmap(scaledRDustbin, canvas.getWidth() - scaledRDustbin.getWidth() - 100, canvas.getHeight() - scaledRDustbin.getHeight(), null);
-
-        // Render the sprite
-        //stone_anim.Draw(canvas);
-        //stone_anim.setY(600);
-
-        // To print FPS on the screen
-        Paint paint = new Paint();
-        paint.setARGB(255, 255, 0, 0);
-        paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
-        paint.setTextSize(60);
-        paint.setShadowLayer(10, 10, 8, Color.GREEN);
-        canvas.drawText("FPS: " + FPS, 130, 50, paint);
-
-        // To print score on the screen
-        Paint scoring = new Paint();
-        scoring.setARGB(255, 255, 0, 0);
-        scoring.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
-        scoring.setTextSize(60);
-        scoring.setShadowLayer(10, 10, 8, Color.BLACK);
-        canvas.drawText("Score: " + score, 1200, 50, scoring);
-    }
-
-
-    //Update method to update the game play
+    /**************************************************************************************
+     Update
+     **************************************************************************************/
     public void update(float dt, float fps){
         FPS = fps;
 
         switch (GameState) {
             case 0: {
+
+                //update game level-----------------------/
+                gameLevel.Update(dt);
+
                 // Update the background to allow panning effect
                 bgX -= 100 * dt; // Allow panning speed
                 if(bgX < -screenWidth) {
@@ -213,16 +200,54 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         }
     }
 
-    // Rendering is done on Canvas
+    /**************************************************************************************
+   Draw
+     **************************************************************************************/
     public void doDraw(Canvas canvas){
         switch (GameState)
         {
             case 0:
                 RenderGameplay(canvas);
+
+                //draw game level------------------------//
+                gameLevel.Draw(canvas, FPS);
+                finger.DrawDebug(canvas);
                 break;
         }
     }
 
+
+    /**************************************************************************************
+     Gameplay draw
+     **************************************************************************************/
+    public void RenderGameplay(Canvas canvas) {
+        // Re-draw 2nd image after the 1st image ends
+        if(canvas == null) {
+            return;
+        }
+        canvas.drawBitmap(scaledbg, bgX, bgY, null);
+        canvas.drawBitmap(scaledbg, bgX + screenWidth, bgY, null);
+
+        // Draw the rubbish
+        canvas.drawBitmap(scaledRubbish, rX, rY, null);
+
+        // Draw the spaceships
+        //canvas.drawBitmap(spaceShip[spaceshipIndex], mX, mY, null);
+
+        // Draw the dangerous dustbin
+       // canvas.drawBitmap(scaledDDustbin, canvas.getWidth() - scaledDDustbin.getWidth() - 800, canvas.getHeight() - scaledDDustbin.getHeight(), null);
+
+        // Draw the recycled dustbin
+       // canvas.drawBitmap(scaledRDustbin, canvas.getWidth() - scaledRDustbin.getWidth() - 100, canvas.getHeight() - scaledRDustbin.getHeight(), null);
+
+        // Render the sprite
+       // stone_anim.Draw(canvas);
+       // stone_anim.setY(600);
+    }
+
+    /**************************************************************************************
+     Collision
+     **************************************************************************************/
     public boolean CheckCollision(int x1, int y1, int w1, int h1, int x2, int y2, int w2, int h2){
         if(x2 >= x1 && x2 < (x1 + w1))   // Start to detect collision of the top left corner
         {
@@ -281,6 +306,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         return super.onTouchEvent(event);
     }*/
 
+    /**************************************************************************************
+    Touch
+     **************************************************************************************/
     @Override
     public boolean onTouchEvent(MotionEvent event)
     {
@@ -289,6 +317,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // Get the x & y positions when player touches the screen
                 X = (short) event.getRawX();
                 Y = (short) event.getRawY();
+
+                //game touch-------------------------------------//
+               finger.UpdatePosMiddle(event.getX(), screenHeight - event.getY());
+                gameLevel.FingerDown(event.getRawX(), screenHeight - event.getRawY(), finger);
                 break;
 
 
@@ -296,6 +328,10 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                 // Get the x & y positions of the player's last touch
                 X = (short) event.getRawX();
                 Y = (short) event.getRawY();
+
+                //game touch-------------------------------------//
+                finger.UpdatePosMiddle(event.getX(), screenHeight - event.getY());
+                gameLevel.FingerUp(event.getRawX(), screenHeight - event.getRawY(), finger);
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -319,6 +355,9 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
                     stone_anim.setY(r.nextInt(screenHeight));
                 }
 
+                //game touch-------------------------------------//
+                finger.UpdatePosMiddle(event.getX(), screenHeight - event.getY());
+                gameLevel.FingerMoves(event.getX(), screenHeight - event.getY(), finger);
                 break;
         }
         return true;

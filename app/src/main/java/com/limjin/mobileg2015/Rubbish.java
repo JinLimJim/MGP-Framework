@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 
 /**
  * Created by tanyiecher on 6/12/2015.
@@ -25,8 +26,10 @@ public class Rubbish extends AABB
     private TYPE type;
     private Physics physics = new Physics(0.f, 0.f);
     private boolean active;
+    private static float time = 10.f;   //10 seconds will despawn
+    private float timer;
 
-    public Rubbish(float x, float y, float xScale, float yScale, TYPE type, float acceleration, Context context)
+    public Rubbish(float x, float y, int xScale, int yScale, TYPE type, float acceleration, Context context)
     {
         super(x, y, xScale, yScale);
         this.type = type;
@@ -34,7 +37,7 @@ public class Rubbish extends AABB
 
         //bitmap-----------------------------//
         ret = BitmapFactory.decodeResource(context.getResources(), R.drawable.button_start);
-        ret = Bitmap.createScaledBitmap(ret, (int) xScale, (int) yScale, true);
+        ret = Bitmap.createScaledBitmap(ret, Draw.RealX(xScale), Draw.RealY(yScale), true);
     }
 
     /*************************************************************************************
@@ -47,6 +50,7 @@ public class Rubbish extends AABB
         this.type = type;
         active = false;
         physics.SetVel(0.f, 0.f);
+        timer = 0.f;
     }
 
     /*************************************************************************************
@@ -54,8 +58,12 @@ public class Rubbish extends AABB
      *************************************************************************************/
     public void Update(float dt)
     {
+        if(timer > time)
+            Deactivate();
+
       //  if(collided)
         //    return;
+        timer += dt;
 
        physics.Update(dt); //update vel
         pos.AddWith(physics.Vel);   //update pos
@@ -64,12 +72,12 @@ public class Rubbish extends AABB
     /*************************************************************************************
     Check collision
      *************************************************************************************/
-    public void CollisonCheck(Obstacle obstacle)
+    public boolean CollisonCheck(AABB obstacle)
     {
         //collision function returns true if collides-----------------------//
         //pass in obstacle AABB? dunno if class shearing is the correct way
         if(!AABB_Res(obstacle))
-            return;
+            return false;
 
         //theres a collision, rebound dir-----------------------------------//
        if(collideX) //x coillide means x length is bigger but on Y surface, vice versa
@@ -81,6 +89,7 @@ public class Rubbish extends AABB
 
         //physics.Vel.SetZero();
         collided = true;
+        return true;
     }
 
     /*************************************************************************************
@@ -102,10 +111,12 @@ public class Rubbish extends AABB
     /*************************************************************************************
      Draw function
      *************************************************************************************/
-    public void Draw(Canvas canvas)
+    public void Draw()
     {
-        super.DrawDebug(canvas);
-        canvas.drawBitmap(ret, pos.x, canvas.getHeight() - (pos.y + scale.y), null);
+        super.DrawDebug();
+
+        Draw.canvas.drawBitmap(ret, Draw.RealX(pos.x),
+                Draw.ScreenHeight - (Draw.RealY(pos.y + scale.y)), null);
     }
 
     void Activate(){active = true;}

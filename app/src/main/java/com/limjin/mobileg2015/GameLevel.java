@@ -30,10 +30,10 @@ public class GameLevel
     private Bin recycleBin;
     private Bin normalBin;
     private int Score = 0;
+    private float yVal;
+    private boolean goUp = false;
 
     private boolean initAlready;
-
-    private Paint paint = new Paint();
 
     /*************************************************************************************
      Constructor
@@ -41,6 +41,8 @@ public class GameLevel
     public GameLevel()
     {
         initAlready = false;
+
+        obstacles.clear();
     }
 
     /*************************************************************************************
@@ -54,37 +56,42 @@ public class GameLevel
     /*************************************************************************************
     Init level: call everytime start new level
      *************************************************************************************/
-    public void Init(Context context, float width, float height)
+    public void Init(Context context)
     {
         if(!initAlready)
         {
             initAlready = true;
-            rubbishMan = new RubbishManager(50, context);
+            rubbishMan = new RubbishManager(70, context);
+
             //posX, posY, scaleX, scaleY
             //right wall------------------------//
-            obstacles.add(new Obstacle(width * 0.95f, 0.f, width * 0.1f, height, context));
+            obstacles.add(new Obstacle(Draw.ViewWidth * 0.95f, 0.f, Draw.ViewHeight * 0.1f, Draw.ViewHeight));
 
             //floor----//
-            obstacles.add(new Obstacle(width * 0.2f,  height * -0.05f, width, height * 0.1f, context));
+            obstacles.add(new Obstacle(Draw.ViewWidth * 0.2f,  Draw.ViewHeight * -0.05f, Draw.ViewWidth, Draw.ViewHeight * 0.1f));
 
             //roof----------//
-            obstacles.add(new Obstacle(width * 0.2f,  height * 0.95f, width, height * 0.1f, context));
+            obstacles.add(new Obstacle(Draw.ViewWidth * 0.2f,  Draw.ViewHeight * 0.95f, Draw.ViewWidth, Draw.ViewHeight * 0.1f));
 
             //random wall---------------------//
-            obstacles.add(new Obstacle(600.f,  height * 0.7f, 150.f, 200.f, context));
+            obstacles.add(new Obstacle(600.f,  Draw.ViewHeight * 0.7f, 150.f, 200.f));
 
-            catapult = new Catapult(200.f, 0.f, 130.f, 260.f, context);
+
+            catapult = new Catapult(200.f, 0.f, 130, 260, context);
 
             //bin---------------------------------//
-            recycleBin = new Bin(true, context, width * 0.75f, height * 0.05f, 160.f, 250.f);
-            normalBin = new Bin(false, context, width * 0.45f, height * 0.05f, 160.f, 250.f);
+            recycleBin = new Bin(true, context, Draw.ViewWidth * 0.75f, Draw.ViewHeight * 0.05f, 160, 250);
+            normalBin = new Bin(false, context, Draw.ViewWidth * 0.45f, Draw.ViewHeight * 0.05f, 160, 250);
         }
 
         rubbishMan.Init();
-        catapult.Init(40, context, rubbishMan);
-        recycleBin.Init();
-        normalBin.Init();
-        Score = 0;
+          catapult.Init(70, context, rubbishMan);
+           recycleBin.Init();
+            normalBin.Init();
+            Score = 0;
+
+        //misc
+        yVal = obstacles.get(3).GetPosY();
     }
 
     /*************************************************************************************
@@ -92,6 +99,19 @@ public class GameLevel
      *************************************************************************************/
     public void Update(float dt)
     {
+        //moving obstacle------------------------//
+        if(obstacles.get(3).GetPosY() > 600.f && goUp)
+            goUp = false;
+        if(obstacles.get(3).GetPosY() < 20.f && !goUp)
+            goUp = true;
+
+        if(goUp)
+            yVal = 1.8f;
+        else
+            yVal = -1.8f;
+
+        obstacles.get(3).Move(0.f, yVal);
+
         catapult.Update(dt);
 
         //check collision------------------------------------//
@@ -105,11 +125,20 @@ public class GameLevel
                 ru.CollisonCheck(ob);
             }
 
+
             //score or no score, if hit dustbin, still despawn
-            if(recycleBin.RubbishCheck(ru))
-                ru.Deactivate();
-            else if(normalBin.RubbishCheck(ru))
-                ru.Deactivate();
+            if(ru.CollisonCheck(recycleBin))
+            {
+               if( recycleBin.RubbishCheck(ru))
+                   ru.Deactivate();
+            }
+
+            if(ru.CollisonCheck(normalBin))
+            {
+               if( normalBin.RubbishCheck(ru))
+                   ru.Deactivate();
+            }
+
         }
 
         //update score----------------------------------------//
@@ -121,7 +150,7 @@ public class GameLevel
      *************************************************************************************/
     public void FingerDown(float xTouchPos, float yTouchPos, AABB finger)
     {
-     catapult.StartDrag(xTouchPos, yTouchPos, finger);
+      catapult.StartDrag(xTouchPos, yTouchPos, finger);
     }
 
     /*************************************************************************************
@@ -143,27 +172,28 @@ public class GameLevel
     /*************************************************************************************
      Level gameplay Draw
      *************************************************************************************/
-    public void Draw(Canvas canvas, float FPS)
+    public void Draw(float FPS)
     {
-       for(int i = 0; i < obstacles.size(); ++i)
-            obstacles.get(i).Draw(canvas);
-       catapult.Draw(canvas);
+      for(int i = 0; i < obstacles.size(); ++i)
+            obstacles.get(i).Draw();
+       catapult.Draw();
 
-        recycleBin.Draw(canvas);
-        normalBin.Draw(canvas);
+        recycleBin.Draw();
+        normalBin.Draw();
 
         // To print score on the screen
-        paint.setARGB(255, 255, 255, 0);
-        paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
-        paint.setTextSize(60);
-        paint.setShadowLayer(10, 10, 8, Color.MAGENTA);
-        canvas.drawText("Score: " + Score, 800, 50, paint);
+        Draw.paint.setStyle(Paint.Style.FILL);
+        Draw.paint.setARGB(255, 255, 255, 0);
+        Draw.paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
+        Draw.paint.setTextSize(60);
+        //Draw.paint.setShadowLayer(10, 10, 8, Color.MAGENTA);
+        Draw.canvas.drawText("Score: " + Score, 800, 50, Draw.paint);
 
         // To print FPS on the screen
-        paint.setARGB(255, 255, 0, 0);
-        paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
-        paint.setTextSize(60);
-        paint.setShadowLayer(10, 10, 8, Color.BLUE);
-        canvas.drawText("FPS: " + FPS, 130, 50, paint);
+        Draw.paint.setARGB(255, 255, 0, 0);
+        Draw.paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
+        Draw.paint.setTextSize(60);
+        //Draw.paint.setShadowLayer(10, 10, 8, Color.BLUE);
+        Draw.canvas.drawText("FPS: " + FPS, 130, 50, Draw.paint);
     }
 }

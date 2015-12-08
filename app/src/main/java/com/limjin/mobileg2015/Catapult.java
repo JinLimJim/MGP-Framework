@@ -9,11 +9,6 @@ import android.graphics.Paint;
 import android.util.DisplayMetrics;
 
 import java.util.LinkedList;
-
-/**
- * Created by tanyiecher on 6/12/2015.
- */
-
 /*************************************************************************************
 Launches rubbish.
  *************************************************************************************/
@@ -54,7 +49,7 @@ public class Catapult
     //Utilities-----------------------//
     public static Vector2 dir = new Vector2();
 
-    public Catapult(float posX, float posY, float scaleX, float scaleY, Context context)
+    public Catapult(float posX, float posY, int scaleX, int scaleY, Context context)
     {
         this.pos.x = posX;
         this.pos.y = posY;
@@ -68,8 +63,7 @@ public class Catapult
 
         //bitmap-----------------------------------------------------------//
         ret = BitmapFactory.decodeResource(context.getResources(), R.drawable.catapult);
-        ret = Bitmap.createScaledBitmap(ret, (int) scale.x, (int) scale.y, true);
-
+        ret = Bitmap.createScaledBitmap(ret, Draw.RealX(scaleX), Draw.RealX(scaleY), true);
         bound = new AABB(pos.x, pos.y, scale.x, scale.y);
     }
 
@@ -97,37 +91,42 @@ public class Catapult
         }
     }
 
-    public void Draw(Canvas canvas)
+    public void Draw()
     {
-        canvas.drawBitmap(ret, pos.x, canvas.getHeight() - (pos.y + scale.y), null);
+        //draw the catapult------------------------//
+        Draw.canvas.drawBitmap(ret, Draw.RealX(pos.x),
+                Draw.ScreenHeight - (Draw.RealY(pos.y + scale.y)), null);
 
         //testing line------------------------------------------------//
         if(state == STATE.DRAGGING)
         {
+            Paint paint = new Paint();
             paint.setColor(Color.RED);
             paint.setStrokeWidth(10);
 
             //From startPos to current dragging pos
-            canvas.drawLine(startPos.x, canvas.getHeight() - startPos.y, fingerPos.x, canvas.getHeight() - fingerPos.y, paint);
+            Draw.canvas.drawLine(Draw.RealX(startPos.x), Draw.ScreenHeight - Draw.RealY(startPos.y),
+                    Draw.RealX(fingerPos.x), Draw.ScreenHeight - Draw.RealY(fingerPos.y), paint);
         }
 
         //draw the rubbish------------------------------------------//
         for(int i = 0; i < totalDragged; ++i)
         {
             if(rubbishPile.get(i).GetActive())
-                 rubbishPile.get(i).Draw(canvas);
+                 rubbishPile.get(i).Draw();
         }
 
         paint.setARGB(255, 255, 0, 0);
         paint.setStrokeWidth(120); // how thick you want the text to be in terms of pixel
         paint.setTextSize(60);
-        canvas.drawText("Active: " + totalDragged, 130, 80, paint);
+        Draw.canvas.drawText("Active: " + totalDragged, 130, 80, paint);
 
-        bound.DrawDebug(canvas);
+        bound.DrawDebug();
     }
 
     /*************************************************************************************
      Call when finger started dragging on screen
+     touch pos passed in should be relative to view space
      *************************************************************************************/
     public void StartDrag(float xTouchPos, float yTouchPos, AABB finger)
     {
@@ -155,6 +154,7 @@ public class Catapult
             return;
 
         //being dragged--------------------------------------//
+        //touch pos in view space
         fingerPos.Set(xTouchPos, yTouchPos);
         rubbishPile.get(totalDragged-1).Dragged(xTouchPos, yTouchPos);
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 
 /**
  * Created by tanyiecher on 6/12/2015.
@@ -14,7 +15,7 @@ public class Bin extends AABB
     private boolean recyclable;
     private int score;
 
-    public Bin(boolean recyclable, Context context, float x, float y, float xScale, float yScale)
+    public Bin(boolean recyclable, Context context, float x, float y, int xScale, int yScale)
     {
         super(x, y, xScale, yScale);
         this.recyclable = recyclable;
@@ -22,10 +23,11 @@ public class Bin extends AABB
 
         //bitmap-----------------------------//
         if(recyclable)
-         ret = BitmapFactory.decodeResource(context.getResources(), R.drawable.recycledustbin);
+           ret = BitmapFactory.decodeResource(context.getResources(), R.drawable.recycledustbin);
         else
-            ret = BitmapFactory.decodeResource(context.getResources(), R.drawable.dustbin);
-        ret = Bitmap.createScaledBitmap(ret, (int) scale.x, (int) scale.y, true);
+            ret = BitmapFactory.decodeResource(context.getResources(), R.drawable.dangerdustbin);
+
+        ret = Bitmap.createScaledBitmap(ret, Draw.RealX(xScale), Draw.RealX(yScale), true);
     }
 
     public void Init()
@@ -35,11 +37,10 @@ public class Bin extends AABB
 
     boolean RubbishCheck(Rubbish rubbish)
     {
-        if(!AABB_Det(rubbish))  //as long as got collide, will return true
-            return false;
-
+        boolean g = false;
         if(AABB_Det_MiddleX(rubbish)) {
-++score;
+
+            g = true;
             if (recyclable) {
                 if (rubbish.GetType() == Rubbish.TYPE.RECYCLABLE) {
                     ++score;
@@ -51,13 +52,16 @@ public class Bin extends AABB
             }
         }
 
-        return true;
+        return g;
     }
 
-    public void Draw(Canvas canvas)
+    public void Draw()
     {
-        super.DrawDebug(canvas);
-        canvas.drawBitmap(ret, pos.x, canvas.getHeight() - (pos.y + scale.y), null);
+       // super.DrawDebug();
+        Draw.RealX(pos.x);
+
+        Draw.canvas.drawBitmap(ret, Draw.RealX(pos.x),
+                Draw.ScreenHeight - (Draw.RealY(pos.y + scale.y)), null);
     }
 
     public int GetScore(){return score;}

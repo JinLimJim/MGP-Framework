@@ -19,7 +19,7 @@ public class RubbishManager
     {
         for(int i = 0; i < TotalRubbish; ++i)
         {
-            rubbishPile.add(new Rubbish(0.f, 0.f, 50.f, 50.f, Rubbish.TYPE.RECYCLABLE, 50.f, context));
+           rubbishPile.add(new Rubbish(0.f, 0.f, 50, 50, Rubbish.TYPE.RECYCLABLE, 50.f, context));
         }
     }
 
@@ -52,7 +52,7 @@ public class RubbishManager
             returnIndex = rubbishPile.size();
 
             for (int i = 0; i < 10; ++i) {
-                rubbishPile.add(new Rubbish(0.f, 0.f, 50.f, 50.f, Rubbish.TYPE.RECYCLABLE, 50.f, context));
+                rubbishPile.add(new Rubbish(0.f, 0.f, 50, 50, Rubbish.TYPE.RECYCLABLE, 50.f, context));
             }
         }
 

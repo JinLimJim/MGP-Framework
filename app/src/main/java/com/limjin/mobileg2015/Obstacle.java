@@ -12,26 +12,38 @@ Obstacle rectangle
  *************************************************************************************/
 public class Obstacle extends AABB
 {
-    private Bitmap ret;
-    private static Paint paint = new Paint();
 
-    public Obstacle(float x, float y, float scaleX, float scaleY, Context context)
+    public Obstacle(float x, float y, float scaleX, float scaleY)
     {
         super(x, y, scaleX, scaleY);
-       // ret = BitmapFactory.decodeResource(context.getResources(), R.drawable.optionpage);
+    }
+
+    /*************************************************************************************
+     Move function: moves obstacle
+     *************************************************************************************/
+    public void Move(float x, float y)
+    {
+        pos.x += x;
+        pos.y += y;
     }
 
     /*************************************************************************************
      Draw function
      *************************************************************************************/
-    public void Draw(Canvas canvas)
+    public void Draw()
     {
-        paint.setColor(Color.MAGENTA);
-        paint.setStrokeWidth(3);
         top.Copy(pos);
         top.AddWith(scale);
 
-        canvas.drawRect(pos.x, canvas.getHeight() - top.y, top.x, canvas.getHeight() - pos.y, paint);
-      //  canvas.drawBitmap(ret, bottom.x, canvas.getHeight() - bottom.y, null);
+        Draw.paint.setColor(Color.CYAN);
+        Draw.paint.setStrokeWidth(3);
+        Draw.paint.setStyle(Paint.Style.FILL);
+
+        Draw.canvas.drawRect(Draw.RealX(pos.x),
+                Draw.ScreenHeight - Draw.RealY(top.y), Draw.RealX(top.x),
+                Draw.ScreenHeight - Draw.RealY(pos.y), Draw.paint);
     }
+
+    public float GetPosX(){return pos.x;}
+    public float GetPosY(){return pos.y;}
 }

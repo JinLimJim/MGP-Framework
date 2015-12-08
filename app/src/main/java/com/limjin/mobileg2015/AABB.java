@@ -33,13 +33,14 @@ public class AABB
         scale.y = yScale;
     }
 
+    //pos set to this point (convert with units)
     public void UpdatePos(float xPos, float yPos)
     {
         pos.x = xPos;
         pos.y = yPos;
     }
 
-    //for touch event, pos set to middle
+    //for touch event
     public void UpdatePosMiddle(float xPos, float yPos)
     {
         pos.x = xPos - scale.x * 0.5f;
@@ -71,14 +72,10 @@ public class AABB
         checkTop.Copy(checkMe.pos);
         checkTop.AddWith(checkMe.scale);
 
-        if((top.x > checkBottom.x && bottom.x < checkTop.x) && (top.y > checkBottom.y && bottom.y < checkTop.y))
-        {
-            if ((top.x > checkTop.x) && (bottom.x < checkBottom.x))
-                return true;
-            else
-                return false;
-        }
-        return false;
+        if ((top.x > checkTop.x) && (bottom.x < checkBottom.x))
+            return true;
+        else
+            return false;
     }
 
     public boolean AABB_Res(AABB checkMe)
@@ -194,15 +191,17 @@ public class AABB
 
 
 
-    public void DrawDebug(Canvas canvas)
+    public void DrawDebug()
     {
-       Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        paint.setStrokeWidth(3);
-        paint.setStyle(Paint.Style.STROKE);
+        Draw.paint.setColor(Color.RED);
+        Draw.paint.setStrokeWidth(3);
+        Draw.paint.setStyle(Paint.Style.STROKE);
+
         top.Copy(pos);
         top.AddWith(scale);
 
-        canvas.drawRect(pos.x, canvas.getHeight() - top.y, top.x, canvas.getHeight() - pos.y, paint);
+        Draw.canvas.drawRect(Draw.RealX(pos.x),
+                Draw.ScreenHeight - Draw.RealY(top.y), Draw.RealX(top.x),
+                Draw.ScreenHeight - Draw.RealY(pos.y),  Draw.paint);
     }
 }

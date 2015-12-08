@@ -78,6 +78,7 @@ public class GameThread extends Thread {
             Canvas c = null;
             try {
                 c = this.holder.lockCanvas();
+                Draw.canvas = c;
                 synchronized(holder){
                     if (myView != null){
                         if (getPause() == false)

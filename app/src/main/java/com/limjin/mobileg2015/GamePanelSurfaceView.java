@@ -40,7 +40,7 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
      private AABB finger;
 
     // Variables used for background rendering-------------//
-    private Bitmap bg, scaledbg;
+    public static Bitmap bg, scaledbg;
 
     // background start and end point
     private short bgX = 0, bgY = 0;
@@ -108,8 +108,6 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
         // Destroy the thread
         if (myThread.isAlive()){
             myThread.startRun(false);
-
-
         }
         boolean retry = true;
         while (retry) {
@@ -121,6 +119,8 @@ public class GamePanelSurfaceView extends SurfaceView implements SurfaceHolder.C
             {
             }
         }
+
+
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){

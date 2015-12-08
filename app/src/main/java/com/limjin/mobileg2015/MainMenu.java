@@ -19,7 +19,6 @@ public class MainMenu extends Activity implements OnClickListener {
     MediaPlayer bgMusic;
     MediaPlayer buttonClick;
     MediaPlayer buttonStart;
-    private int checkmainMusic = OptionPage.music;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +34,10 @@ public class MainMenu extends Activity implements OnClickListener {
         overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
 
         // Set up background music
-        if(checkmainMusic == 0) {
-            bgMusic = MediaPlayer.create(MainMenu.this, R.raw.chasers);
-            bgMusic.setVolume(20, 20);
-            bgMusic.setLooping(true);
-            bgMusic.start();
-        }
+        bgMusic = MediaPlayer.create(MainMenu.this, R.raw.chasers);
+        bgMusic.setVolume(20, 20);
+        bgMusic.setLooping(true);
+        bgMusic.start();
 
         // Set up button music
         buttonClick = MediaPlayer.create(this, R.raw.buttonsound);
@@ -67,12 +64,12 @@ public class MainMenu extends Activity implements OnClickListener {
             buttonStart.start();
         }
 
-        else if(view == btn_option){
+        if(view == btn_option){
             intent.setClass(this, OptionPage.class);
             buttonClick.start();
         }
 
-        else if(view == btn_gallery){
+        if(view == btn_gallery){
             intent.setClass(this, GalleryPage.class);
             buttonClick.start();
         }
@@ -82,12 +79,8 @@ public class MainMenu extends Activity implements OnClickListener {
 
     protected void onPause(){
         super.onPause();
-        if(checkmainMusic == 0) {
-            bgMusic.release();
-            //  finish();
-        }
-        // Reset the global variable
-        OptionPage.music = 0;
+        bgMusic.release();
+        //  finish();
     }
 
     protected void onStop(){

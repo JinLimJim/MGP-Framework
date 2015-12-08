@@ -16,7 +16,6 @@ public class Level1splash extends Activity {
 
     protected boolean _active = true;
     protected int _splashTime = 5000; // time to display in ms
-    //MediaPlayer ourSong;
     ImageView image;
 
     @Override
@@ -27,9 +26,6 @@ public class Level1splash extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //hide top bar
 
         setContentView(R.layout.level1splash);
-
-        //ourSong = MediaPlayer.create(Splashpage.this, R.raw.splashmusic);
-        // ourSong.start();
 
         //thread for displaying the Splash Screen
         Thread splashTread = new Thread() {
@@ -52,8 +48,6 @@ public class Level1splash extends Activity {
                     Intent intent = new Intent(Level1splash.this, GamePage.class);
 
                     startActivity(intent);
-
-                 //   overridePendingTransition(R.anim.splashfadein, R.anim.splashfadeout);
                 }
             }
         };

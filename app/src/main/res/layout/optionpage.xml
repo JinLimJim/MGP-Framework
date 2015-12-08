@@ -43,8 +43,9 @@
         android:text="Turn Background Music Off"
         android:id="@+id/checkBox"
 
-        android:layout_marginTop="40dp"
         android:textColor="#f1f908"
-        android:checked="false" />
+        android:checked="false"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/seekBar" />
 
 </RelativeLayout>
